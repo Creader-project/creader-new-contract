@@ -4,31 +4,36 @@ pragma solidity ^0.8.0;
 //openzeppelin access control
 import "./interface/ICreaderV2Factory.sol";
 import "./CreaderV2Copyright.sol";
+import "hardhat/console.sol";
 
-contract CreaderV2factory is ICreaderV2Factory,  {
+contract CreaderV2factory is ICreaderV2Factory {
 
-    address public _owners;
+    address public owner;
+    uint public total;
 
-    mapping(address => mapping(address => address)) public copyrightInfo;
+    mapping(address => mapping(uint => address)) public copyrightInfo;
 
     constructor() {
-        _owners = msg.sender;
+        owner = msg.sender;
     }
 
     modifier onlyOwner() {
-        require(msg.sender == _owners, "Ownable: caller is not the owner");
+        require(msg.sender == owner, "Ownable: caller is not the owner");
         _;
     }
 
     function setOwner(address _owner) public onlyOwner {
-        _owners = _owner;
+        owner = _owner;
     }
 
     function createCopyright(
         address author
-    ) external return (address) {
-        address newCopyright = new CreaderV2Copyright(author);
-        return newCopyright;
+    ) external returns (address){
+        CreaderV2Copyright newCopyright = new CreaderV2Copyright(author);
+        address newAddress = address(newCopyright);
+        copyrightInfo[author][total] = newAddress;
+        console.log("newCopyright address: %s", newAddress);
+        total++;
+        return newAddress;
     }
-
 }
