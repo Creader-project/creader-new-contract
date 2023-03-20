@@ -6,7 +6,7 @@ import "./interface/ICreaderV2Factory.sol";
 import "./CreaderV2Copyright.sol";
 import "hardhat/console.sol";
 
-contract CreaderV2factory is ICreaderV2Factory {
+contract CreaderV2factory {
 
     address public owner;
     uint public total;
@@ -29,7 +29,7 @@ contract CreaderV2factory is ICreaderV2Factory {
     function createCopyright(
         address author
     ) external returns (address){
-        CreaderV2Copyright newCopyright = new CreaderV2Copyright(author);
+        CreaderV2Copyright newCopyright = new CreaderV2Copyright(author, owner);
         address newAddress = address(newCopyright);
         copyrightInfo[author][total] = newAddress;
         console.log("newCopyright address: %s", newAddress);

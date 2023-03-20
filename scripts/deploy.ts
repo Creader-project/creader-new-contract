@@ -9,10 +9,11 @@ async function main() {
   const Factory = await ethers.getContractFactory("CreaderV2factory");
   const factory = await Factory.deploy();
   await factory.deployed();
-
-  await factory.functions.createCopyright(deployer.address);
-
   console.log(`deployed to ${factory.address}`);
+  const copyright = await factory.functions.createCopyright(deployer.address);
+  console.log(`deployed to ${copyright}`);
+
+  
 }
 
 // We recommend this pattern to be able to use async/await everywhere
