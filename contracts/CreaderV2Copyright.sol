@@ -1,61 +1,96 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.9;
+
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
 import "hardhat/console.sol";
-contract CreaderV2Copyright is ERC721 {
 
-    uint256 public nextTokenId;
-    address public owner;
-    address public admin;
 
-    struct CopyrightData {
+contract CreaderV2Copyright is ERC721, ERC721Enumerable, ERC721URIStorage {
+
+    uint64 private _currentTokenId = 0;
+
+
+    struct Novel {
         uint256 id;
         string title;
         string description;
-        string status;
+        NovelStatus status;
         address owner;
     }
 
-    mapping(uint256 => CopyrightData) public copyrightData;
+    enum NovelStatus {
+        Draft,
+        Published,
+        Deleted
+    }
 
-    constructor(address _author, address _admin)
+    mapping(uint256 => Novel) public novelData;
+
+    constructor()
         ERC721("Copyright Token", "CPT")
     {
-        owner = _author;
-        admin = _admin;
-        mint("test", "test");
     }
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only the owner can perform this action");
-        _;
+
+    function _baseURI() internal pure override returns (string memory) {
+        return "https://test.test";
     }
 
-    modifier onlyAdmin() {
-        require(msg.sender == admin, "Only the admin can perform this action");
-        _;
-    }
 
-    function mint(string memory _title, string memory _description)
+    function mint(string memory _tokenURI)
         public
+        returns (uint256)
+    {
+        uint64 newItemId = _currentTokenId;
+        _mint(msg.sender, newItemId);
+        _setTokenURI(newItemId, _tokenURI);
+
+        Novel memory novel = Novel({
+            id: newItemId,
+            title: "test",
+            description: "test",
+            status: NovelStatus.Draft,
+            owner: msg.sender
+        });
+
+        novelData[newItemId] = novel;
+
+        console.log('minted');
+        _currentTokenId++;
+        return newItemId;
+    }
+
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
+        super._beforeTokenTransfer(from, to, tokenId, batchSize);
+    }
+
+    // The following functions are overrides required by Solidity.
+
+    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+        super._burn(tokenId);
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable)
         returns (bool)
     {
-        uint256 newItemId = nextTokenId;
-        _safeMint(owner, newItemId);
-        copyrightData[newItemId] = CopyrightData(
-            newItemId,
-            _title,
-            _description,
-            "pending",
-            owner
-        );
-        nextTokenId++;
-        console.log("newItemId: %s", newItemId);
-        console.log("minted");
-        return true;
+        return super.supportsInterface(interfaceId);
     }
 }

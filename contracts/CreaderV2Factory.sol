@@ -26,14 +26,14 @@ contract CreaderV2factory {
         owner = _owner;
     }
 
-    function createCopyright(
-        address author
-    ) external returns (address){
-        CreaderV2Copyright newCopyright = new CreaderV2Copyright(author, owner);
-        address newAddress = address(newCopyright);
-        copyrightInfo[author][total] = newAddress;
-        console.log("newCopyright address: %s", newAddress);
-        total++;
-        return newAddress;
-    }
+    // function createCopyright(
+    //     address author
+    // ) external returns (address){
+    //     CreaderV2Copyright newCopyright = new CreaderV2Copyright(author, owner);
+    //     address newAddress = address(newCopyright);
+    //     copyrightInfo[author][total] = newAddress;
+    //     console.log("newCopyright address: %s", newAddress);
+    //     total++;
+    //     return newAddress;
+    // }
 }
