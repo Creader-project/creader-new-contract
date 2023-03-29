@@ -14,7 +14,7 @@ async function main() {
   await copyrighNFT.deployed();
 
   console.log(`deployed to ${copyrighNFT.address}`);
-  await copyrighNFT.functions.mint("tttt");
+  // await copyrighNFT.functions.mint("tttt");
   // console.log(`deployed to ${factory.address}`);
   // const copyright = await factory.functions.createCopyright(deployer.address);
   // console.log(`deployed to ${copyright}`);

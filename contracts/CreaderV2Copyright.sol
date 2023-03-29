@@ -27,6 +27,9 @@ contract CreaderV2Copyright is ERC721, ERC721Enumerable, ERC721URIStorage {
         Deleted
     }
 
+    event NovelCreated(uint256 id, string title, string description, NovelStatus status, address owner);
+    event Minted(uint256 id, string title, string description, NovelStatus status, address owner);
+
     mapping(uint256 => Novel) public novelData;
 
     constructor()
@@ -46,6 +49,7 @@ contract CreaderV2Copyright is ERC721, ERC721Enumerable, ERC721URIStorage {
     {
         uint64 newItemId = _currentTokenId;
         _mint(msg.sender, newItemId);
+        emit Minted(newItemId, "test", "test", NovelStatus.Draft, msg.sender);
         _setTokenURI(newItemId, _tokenURI);
 
         Novel memory novel = Novel({
@@ -57,7 +61,8 @@ contract CreaderV2Copyright is ERC721, ERC721Enumerable, ERC721URIStorage {
         });
 
         novelData[newItemId] = novel;
-
+        emit NovelCreated(newItemId, "test", "test", NovelStatus.Draft, msg.sender);
+        
         console.log('minted');
         _currentTokenId++;
         return newItemId;
